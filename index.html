@@ -73,7 +73,7 @@
   .achint{font-size:var(--fs-s);color:var(--muted);margin-top:2px;font-weight:600}
   .achint:empty{display:none}
   .frow.inline,.frow.inline:first-of-type{flex-direction:row!important;align-items:center}
-  .frow.inline .lbl{flex:0 0 auto;white-space:nowrap}
+  .frow.inline .lbl{flex:0 0 auto;white-space:normal}
   .frow.inline .ctl{flex:0 0 220px!important;min-width:0}
   @media (max-width:480px){ .frow.inline .ctl{flex-basis:146px!important} .frow.inline .pickbtn{padding-left:10px;padding-right:26px} }
   .datebtn.is-today{color:var(--orange)}
@@ -275,6 +275,11 @@
     .status-btns button:hover,.modes button:hover,.pickbtn:hover,.picker .opt:hover,.comp-btn:hover{border-color:var(--o2)}
   }
   @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+  /* no horizontal page scroll: keep everything within the screen width */
+  html,body{max-width:100%;overflow-x:hidden}
+  .wrap{width:100%}
+  .preview{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.form{max-width:100%}
 </style>
 <div class="wrap">
 
@@ -401,8 +406,8 @@
     </div>
     <div class="copybar">
       <a class="btn orange" id="openOutlook" href="#" rel="noopener" onclick="return beforeOpenOutlook(event)">Copy + open Outlook</a>
-      <button class="btn" onclick="copy('body')">Copy email only</button>
       <button class="btn ghost" onclick="copy('subj')">Copy subject</button>
+      <button class="btn" onclick="copy('body')">Copy email only</button>
     </div>
     <p class="hint"><b>Спочатку відкрий цю сторінку в Safari</b> (кнопка Поділитися -> Open in Safari, або Add to Home Screen) - усередині застосунку Claude Outlook не відкривається. Далі: тап <b>Copy + open Outlook</b> (копіює лист і відкриває Outlook з адресою й темою) -> у тілі листа довгий тап -> Paste -> Send.</p>
     <details class="manual" id="manualSend">
@@ -415,7 +420,7 @@
     <p class="hint">Не відкрилось? <a id="owaLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">Outlook web (встав дизайн)</a> · <a id="mailLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">через Пошту iPhone</a></p>
   </section>
 
-  <p class="hint" id="buildTag" style="text-align:center;margin:4px 0 24px">artifact v17 - 2026-11-04</p>
+  <p class="hint" id="buildTag" style="text-align:center;margin:4px 0 24px">artifact v18 - 2026-11-04</p>
 </div>
 <div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="pkTitle" onclick="if(event.target===this)closePicker()">
   <div class="sheet">
