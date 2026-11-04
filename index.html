@@ -1,0 +1,825 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Commissary Report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root{color-scheme:light;
+    /* email + preview parity - these mirror the copied letter, do not restyle the email */
+    --blue:#1b4a8b; --navy:#14386b; --orange:#e67817; --orange-bg:#fff6ee;
+    /* UI gamut from styleguide: corporate orange + charcoal + lime */
+    --o1:#f58024; --o2:#e05d10;
+    --charcoal:#2a2f37; --charcoal-2:#3b424c;
+    --lime:#8dcf1a; --lime-ink:#4a6a08; --lime-bg:#f1f8e2;
+    --bg:#f4f5f7; --card:#ffffff; --line:#e7e9ee; --line-soft:#eef1f5; --field:#f6f7f9; --ink:#1c1f26;
+    --muted:#6b7280; --ok:#2f8f3e; --err:#c0392b; --errbg:#fdecea;
+    --zebra:#f8f9fb;
+    --r-card:20px; --r-ctl:14px;
+    --sh-card:0 1px 2px rgba(20,24,33,.04),0 12px 28px rgba(20,24,33,.06);
+    --sh-ctl:0 1px 2px rgba(20,24,33,.05);
+    --ease:cubic-bezier(.23,1,.32,1);
+    --fs-s:14px; --fs-m:16px; --fs-l:18px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--ink);
+    background:radial-gradient(130% 80% at 100% -10%,#ffe9d8 0%,rgba(255,233,216,0) 42%),var(--bg);background-attachment:fixed;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:var(--fs-m);line-height:1.45;-webkit-text-size-adjust:100%}
+  .wrap{max-width:960px;margin:0 auto;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .phead{display:flex;align-items:center;gap:14px;padding:10px 4px 18px}
+  .logo{flex:0 0 auto;width:56px;height:56px;border-radius:16px;background:linear-gradient(180deg,var(--o1),var(--o2));
+    display:grid;place-items:center;box-shadow:0 4px 14px rgba(224,93,16,.28)}
+  .logo svg{width:32px;height:32px;display:block}
+  .phead h1{margin:0;font-size:clamp(28px,8vw,40px);line-height:.98;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
+  .phead p{margin:6px 0 0;font-size:var(--fs-s);color:var(--muted);font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-card);padding:18px;margin-bottom:14px;
+    box-shadow:var(--sh-card)}
+  .card h2{font-size:var(--fs-l);color:var(--ink);margin:0 0 6px;font-weight:800;display:flex;align-items:center;gap:9px}
+  .card h2::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--acc,var(--line));flex:0 0 auto}
+  .c-ac{--acc:var(--o2)} .c-st{--acc:var(--charcoal)} .c-it{--acc:var(--lime-ink)}
+  .c-dp{--acc:var(--o2)} .c-pv{--acc:var(--navy)}
+  .cardtoggle{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;min-height:44px}
+  .chev{font-size:var(--fs-m);transition:transform .15s}
+  .card.collapsed .cbody{display:none} .card.collapsed .chev{transform:rotate(-90deg)}
+  .card.collapsed h2{margin:0}
+  .card .sub{font-size:var(--fs-s);color:var(--muted);margin:0 0 12px}
+
+  /* thumb-first row: label left, control right */
+  .frow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-top:1px solid #eef1f6}
+  .frow:first-of-type{border-top:none}
+  .frow .lbl{flex:1;min-width:0}
+  .frow .lbl b{display:block;font-size:var(--fs-m)}
+  .frow .ctl{flex:0 0 280px;min-width:0;max-width:100%}
+  input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;text-align:left}
+  input[type=date]::-webkit-date-and-time-value{text-align:left}
+  .pickbtn{width:100%;min-height:48px;padding:10px 34px 10px 14px;border:1px solid var(--line);border-radius:var(--r-ctl);background:var(--field);
+    color:var(--ink);font-size:var(--fs-m);font-family:inherit;text-align:left;cursor:pointer;position:relative;font-weight:600}
+  .pickbtn::after{content:'▾';position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:400}
+  .picker{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-end;justify-content:center;z-index:50}
+  .picker.show{display:flex}
+  .picker .sheet{background:#fff;width:100%;max-width:960px;max-height:100dvh;overflow:auto;border-radius:16px 16px 0 0;
+    padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+  .picker .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:var(--fs-l);font-weight:700;color:var(--navy)}
+  .picker .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+  .picker .grid.nums{grid-template-columns:repeat(5,1fr)}
+  .picker .grid.tails{grid-template-columns:repeat(4,1fr)}
+  .picker .grid.tails .opt{min-height:56px}
+  .picker .lt{display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--field);color:var(--o2);font-size:24px;font-weight:800;min-height:56px}
+  .picker .opt{min-height:64px;font-size:var(--fs-l);font-weight:700;border:1.5px solid var(--line);border-radius:12px;background:#fff;
+    color:var(--ink);font-family:inherit;cursor:pointer}
+  .picker .opt small{display:block;font-size:var(--fs-s);font-weight:400;color:var(--muted);margin-top:2px}
+  .picker .opt.sel{border-color:var(--o2);background:var(--orange-bg);color:var(--o2)}
+  .picker .opt.wide{grid-column:1/-1;min-height:56px;font-size:var(--fs-m)}
+  .req{color:var(--err)}
+  .fhint{font-size:var(--fs-s);color:var(--muted);margin:2px 0 0;line-height:1.35}
+  .achint{font-size:var(--fs-s);color:var(--muted);margin-top:2px;font-weight:600}
+  .achint:empty{display:none}
+  .frow.inline,.frow.inline:first-of-type{flex-direction:row!important;align-items:center}
+  .frow.inline .lbl{flex:0 0 auto;white-space:nowrap}
+  .frow.inline .ctl{flex:0 0 220px!important;min-width:0}
+  @media (max-width:480px){ .frow.inline .ctl{flex-basis:146px!important} .frow.inline .pickbtn{padding-left:10px;padding-right:26px} }
+  .datebtn.is-today{color:var(--orange)}
+
+  input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-ctl);
+    font-size:var(--fs-m);font-family:inherit;background:var(--field);color:var(--ink)}
+  input:focus,select:focus{outline:3px solid rgba(242,106,27,.4);outline-offset:1px;border-color:var(--o2)}
+  .static-val{min-height:48px;display:flex;align-items:center;padding:10px 14px;border:1px dashed var(--line);
+    border-radius:var(--r-ctl);background:var(--field);color:var(--muted);font-size:var(--fs-m);font-weight:700}
+  .bigchk{width:32px;height:32px;min-height:0;accent-color:var(--o2);margin-left:auto;display:block}
+  .invalid{border-color:var(--err)!important;background:var(--errbg)!important}
+
+  .addpanel{margin-top:4px;padding:12px;border:1px dashed var(--line);border-radius:10px;background:#fbfcfe;display:none}
+  .addpanel.show{display:block}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+  .grid3 label{display:block;font-size:var(--fs-s);color:var(--muted);margin-bottom:4px;font-weight:600}
+
+  .status-btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .status-btns button,.modes button{min-height:56px;padding:10px 12px;border:1.5px solid var(--line);background:#fff;
+    border-radius:12px;cursor:pointer;color:var(--ink);text-align:left;font-family:inherit}
+  .bt{display:block;font-size:var(--fs-m);font-weight:700}
+  .bsub{display:block;font-size:var(--fs-s);font-weight:400;color:var(--muted);margin-top:2px}
+  .status-btns button.active{border-color:var(--o2);background:var(--orange-bg);color:var(--o2)}
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+  .modes button.active{border-color:var(--orange);background:#fdf0e3;color:var(--orange)}
+  .note-wrap{display:none;margin-top:4px}
+  /* mode switch: restock is primary, inventory is a small secondary toggle */
+  .modeswitch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .modelabel{font-size:var(--fs-m);font-weight:800}
+  .modebtn{min-height:40px;padding:8px 14px;font-size:var(--fs-s)}
+
+  /* items table */
+  table.form{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-m);table-layout:fixed}
+  table.form th{font-size:var(--fs-s);color:var(--muted);padding:8px 6px;border-bottom:2px solid var(--line);
+    text-align:left;font-weight:700}
+  table.form td{padding:6px;vertical-align:middle}
+  col.c-item{width:220px} col.c-x{width:auto} col.c-man{width:118px} col.c-pick{width:122px} col.c-qty{width:92px} col.c-unit{width:120px}
+  table.form td.pick{padding-left:18px}
+  tr.irow td{background:#fff}
+  tr.irow:nth-child(even) td{background:var(--zebra)}
+  tr.irow td:first-child{border-left:6px solid var(--cat,#d1551b);padding-left:10px}
+  .item-name{font-weight:600;overflow-wrap:anywhere}
+  td.xcell{text-align:center}
+  .del{background:none;border:none;color:var(--err);cursor:pointer;font-size:26px;line-height:1;
+    width:48px;height:48px;border-radius:24px}
+  .del:active{background:#fbe3e1}
+  .need{background:#fff;text-align:left}
+  .qpick{background:#fff8f0;border-color:#f0d6b8}
+  .upick{background:var(--field);border-color:var(--line);font-weight:700}
+  .qpick,.upick{padding-left:10px;padding-right:26px} .qpick::after,.upick::after{right:9px}
+  .num{text-align:left}
+  tr.gap td{height:12px;padding:0;background:none}
+  .secbtn{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;min-height:24px}
+  .secbtn .cnt{margin-left:auto;font-size:var(--fs-s);font-weight:600;text-transform:none;letter-spacing:0;opacity:.9}
+  tr.section-row.closed td{border-radius:10px}
+  tr.section-row td{border-radius:10px 10px 10px 0;background:var(--cat,#d1551b);color:#fff;font-weight:800;font-size:var(--fs-m);
+    text-transform:uppercase;letter-spacing:1px;padding:12px}
+  .spent{font-weight:700;color:var(--orange)}
+
+  .add-row{display:grid;grid-template-columns:1fr 200px 110px;gap:10px;margin-top:14px}
+  .newcat{display:none;margin-top:10px;padding:12px;border:1px dashed var(--line);border-radius:10px;background:#fbfcfe}
+  .newcat.show{display:block}
+  .swatches{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .sw{width:44px;height:44px;border-radius:22px;border:3px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+  .sw.sel{box-shadow:0 0 0 3px var(--ink)}
+
+  .btn{min-height:48px;padding:11px 18px;border:none;border-radius:var(--r-ctl);font-size:var(--fs-m);font-weight:700;
+    cursor:pointer;background:var(--charcoal);color:#fff;font-family:inherit;box-shadow:var(--sh-ctl)}
+  .btn.ghost{background:var(--field);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+  .btn.orange{background:linear-gradient(180deg,var(--o1),var(--o2));color:#fff;box-shadow:0 2px 8px rgba(224,93,16,.30)}
+  details{margin-top:12px} summary{cursor:pointer;font-size:var(--fs-s);color:var(--o2);font-weight:700;padding:8px 0}
+
+  .preview{background:#fff;border:1px solid var(--line);border-radius:var(--r-ctl);padding:16px}
+  .preview .subj{font-weight:700;font-size:var(--fs-l);margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--orange)}
+  .copybar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .preview .to{font-size:var(--fs-s);color:var(--muted);margin-bottom:6px}
+  .preview .to span{color:var(--ink);font-weight:600}
+  .linkbtn{background:none;border:none;color:var(--blue);font-size:var(--fs-s);font-family:inherit;padding:4px 6px;cursor:pointer;text-decoration:underline}
+  .tosetup{display:none;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:0 0 12px}
+  .tosetup.show{display:grid}
+  .tosetup input{min-height:40px;font-size:var(--fs-s)}
+  .copybar .btn{min-height:56px;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;box-sizing:border-box}
+  .hint{font-size:var(--fs-s);color:var(--muted);margin-top:8px}
+
+  .toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;padding:12px 20px;
+    border-radius:999px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;font-size:var(--fs-m);max-width:90%;text-align:center}
+  .toast.show{opacity:1} .toast.err{background:var(--err)}
+
+  @media (max-width:600px){
+    .frow{flex-direction:column;align-items:stretch}
+    .frow .ctl{flex-basis:auto}
+    .add-row{grid-template-columns:1fr 1fr}
+    .add-row .btn{grid-column:1/-1}
+    col.c-item{width:150px} col.c-man{width:96px} col.c-pick{width:96px} col.c-qty{width:66px} col.c-unit{width:104px}
+    .copybar{grid-template-columns:1fr}
+  }
+  @media (max-width:480px){
+    .wrap{padding-block:10px}
+    .card{padding:12px}
+    col.c-item{width:auto} col.c-x{width:40px} col.c-man{width:76px} col.c-pick{width:70px} col.c-qty{width:56px} col.c-unit{width:100px}
+    table.form td{padding:4px}
+    table.form td.pick{padding-left:8px}
+    tr.irow td:first-child{padding-left:8px}
+    .del{width:40px;height:40px;font-size:22px}
+    .pickbtn{padding-right:26px}
+  }
+
+  /* pickers: clear the notch in landscape and fit iPhone screens without scrolling */
+  .picker .sheet{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .picker .opt{line-height:1.15}
+  /* full-screen pickers: rows share the screen height, so everything is visible at once */
+  .picker.full{align-items:stretch}
+  .picker.full .sheet{height:100dvh;max-height:none;border-radius:0;display:flex;flex-direction:column;
+    padding-top:max(14px,env(safe-area-inset-top,0px));padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+  .picker.full .grid{flex:1;min-height:0;align-content:stretch;grid-auto-rows:minmax(64px,1fr);gap:10px}
+  .picker .grid.tails{grid-template-columns:repeat(4,1fr)}
+  .picker .tg{display:flex;flex-direction:column;gap:4px;min-height:0}
+  .picker .tl{font-size:var(--fs-m);font-weight:800;color:var(--orange);letter-spacing:.06em;padding-left:4px;line-height:1.1}
+  .picker .tt{display:grid;gap:10px;flex:1;min-height:0}
+  .picker .tt .opt{min-height:52px;height:100%}
+  .picker .grid.nums{grid-template-columns:repeat(5,1fr)}
+  .picker .grid.nums .opt{font-size:24px}
+  .picker.full .grid.nums{grid-auto-rows:minmax(64px,84px);align-content:end}
+  .picker.full .grid.tails{grid-auto-rows:minmax(64px,100px);align-content:start}
+  .picker .pfoot{margin-top:12px}
+  .picker .pfoot:empty{display:none}
+  .picker .pfoot .opt{width:100%;min-height:56px;font-size:var(--fs-m)}
+  @media (min-width:700px){ .picker .grid.tails{grid-template-columns:repeat(6,1fr)} }
+  @media (orientation:landscape) and (max-height:500px){
+    .picker.full .sheet{padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+    .picker .ph{margin-bottom:6px}
+    .picker.full .grid,.picker.full .grid.nums,.picker.full .grid.tails{grid-auto-rows:minmax(40px,1fr);gap:6px;align-content:stretch}
+    .picker .grid.tails{grid-template-columns:repeat(8,1fr)}
+    .picker .tt{gap:6px}
+    .picker .tt .opt{min-height:36px}
+    .picker .grid.nums .opt{font-size:var(--fs-l)}
+    .picker .pfoot{margin-top:6px}
+    .picker .pfoot .opt{min-height:44px}
+    .picker .ph .btn{min-height:40px;padding:6px 14px}
+  }
+
+  /* collapsible card summary */
+  .cardtoggle .csum{margin-left:auto;font-size:var(--fs-s);font-weight:600;color:var(--muted)}
+  /* float: default value, kept low-key */
+  .frow.compact{padding:6px 0}
+  .frow.compact .lbl b{font-size:var(--fs-s);color:var(--muted);font-weight:600}
+  .frow.compact .static-val{min-height:28px;padding:3px 10px;font-size:var(--fs-s);border-radius:8px}
+  .frow.compact,.frow.compact:first-of-type{flex-direction:row!important;align-items:center}
+  .frow.compact .ctl{flex:0 0 auto!important}
+  /* complimentary: centred toggle */
+  .comp-row{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0 4px;border-top:1px solid #eef1f6;text-align:center}
+  .comp-btn{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:10px 22px;border:1.5px solid var(--line);border-radius:12px;
+    background:#fff;color:var(--ink);font:inherit;font-size:var(--fs-m);font-weight:700;cursor:pointer}
+  .comp-btn .box{width:24px;height:24px;border:2px solid var(--muted);border-radius:6px;display:grid;place-items:center;color:transparent;font-size:16px;line-height:1}
+  .comp-btn[aria-pressed="true"]{border-color:var(--orange);background:#fdf0e3;color:#b85a0c}
+  .comp-btn[aria-pressed="true"] .box{background:var(--orange);border-color:var(--orange);color:#fff}
+  /* condition flags: independent on/off toggles, combine with the Items list */
+  .flags{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:480px){ .flags{grid-template-columns:1fr} }
+  .flag-btn{display:flex;align-items:center;gap:12px;min-height:60px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;
+    background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+  .flag-btn .box{width:24px;height:24px;flex:0 0 auto;border:2px solid var(--muted);border-radius:6px;display:grid;place-items:center;color:transparent;font-size:16px;line-height:1}
+  .flag-btn b{display:block;font-size:var(--fs-m);font-weight:700}
+  .flag-btn small{display:block;font-size:var(--fs-s);color:var(--muted);margin-top:2px}
+  .flag-btn[aria-pressed="true"]{border-color:var(--o2);background:var(--orange-bg);color:#b85a0c}
+  .flag-btn[aria-pressed="true"] small{color:#b85a0c}
+  .flag-btn[aria-pressed="true"] .box{background:var(--o2);border-color:var(--o2);color:#fff}
+  /* calendar picker */
+  .picker .grid.cal{grid-template-columns:repeat(7,1fr);gap:6px}
+  .picker.full .grid.cal{grid-auto-rows:minmax(44px,60px);align-content:start}
+  .picker .calnav{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:var(--fs-l);color:var(--navy)}
+  .picker .calnav button{min-width:56px;min-height:44px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:22px;color:var(--navy);cursor:pointer}
+  .picker .wd{display:flex;align-items:end;justify-content:center;font-size:var(--fs-s);font-weight:700;color:var(--muted)}
+  .picker .day{border:1.5px solid var(--line);border-radius:12px;background:#fff;font:inherit;font-size:var(--fs-m);font-weight:700;color:var(--ink);cursor:pointer}
+  .picker .day.today{border:2px solid var(--orange);color:var(--orange)}
+  .picker .day.sel{background:var(--orange);border-color:var(--orange);color:#fff}
+  .picker .day.blank{visibility:hidden}
+  .datebtn .dsub{font-weight:600;color:var(--orange);font-size:var(--fs-s);margin-left:6px}
+  @media (orientation:landscape) and (max-height:500px){
+    .picker.full .grid.cal{grid-auto-rows:minmax(28px,1fr);gap:4px;align-content:stretch}
+    .picker .calnav button{min-height:30px;min-width:48px;font-size:18px}
+    .picker .calnav{font-size:var(--fs-m)}
+    .picker .day{font-size:var(--fs-s);border-radius:8px}
+  }
+  .manual{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:4px 12px;background:var(--card)}
+  .manual summary{font-size:var(--fs-s);font-weight:700;color:var(--navy);padding:10px 0}
+  .msteps{margin:0 0 10px;padding-left:20px;display:grid;gap:10px;font-size:var(--fs-s);color:var(--ink)}
+  .msteps .btn{min-height:40px;padding:6px 12px;font-size:var(--fs-s);margin-right:4px}
+
+  /* lime accent: the second colour from the styleguide, used for "filled" counts */
+  .csum:not(:empty),.secbtn .cnt:not(:empty){background:var(--lime-bg);color:var(--lime-ink);border-radius:999px;padding:2px 10px;font-weight:700}
+
+  /* Emil polish: press feedback, intentional easing, reduced motion */
+  .btn,.pickbtn,.comp-btn,.flag-btn,.status-btns button,.modes button,.picker .opt,.picker .day,.sw,.del,.secbtn,.cardtoggle,.linkbtn,.calnav button{
+    transition:transform .14s var(--ease),box-shadow .14s var(--ease),background .14s var(--ease),border-color .14s var(--ease),filter .14s var(--ease)}
+  .btn:active,.pickbtn:active,.comp-btn:active,.flag-btn:active,.status-btns button:active,.modes button:active,.picker .opt:active,.picker .day:active,.sw:active,.secbtn:active,.del:active,.calnav button:active{transform:scale(.97)}
+  @media (hover:hover) and (pointer:fine){
+    .btn:hover{filter:brightness(1.04)}
+    .status-btns button:hover,.modes button:hover,.pickbtn:hover,.picker .opt:hover,.comp-btn:hover{border-color:var(--o2)}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+<div class="wrap">
+
+  <header class="phead">
+    <span class="logo"><svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 6 h6"/><path d="M10 6 v3"/><rect x="7" y="9" width="18" height="16" rx="2.5"/><line x1="7" y1="15" x2="25" y2="15"/><line x1="7" y1="20" x2="25" y2="20"/><circle cx="12" cy="27" r="1.5" fill="#fff" stroke="none"/><circle cx="20" cy="27" r="1.5" fill="#fff" stroke="none"/></svg></span>
+    <div class="htext">
+      <h1>Commissary</h1>
+      <p>Post-flight trolley report</p>
+    </div>
+  </header>
+
+  <!-- AIRCRAFT -->
+  <section class="card c-ac" aria-labelledby="h-ac">
+    <h2 id="h-ac">Aircraft</h2>
+    <div class="frow inline">
+      <div class="lbl">
+        <b><label for="acSel">Aircraft tail number</label></b>
+        <div class="achint" id="acHint"></div>
+      </div>
+      <div class="ctl"><button type="button" class="pickbtn" id="acBtn" onclick="pickTail()">- select -</button><select id="acSel" hidden aria-hidden="true" tabindex="-1"></select></div>
+    </div>
+    <div class="addpanel" id="addPanel">
+      <div class="grid3">
+        <div><label for="newCode">Tail code</label><input id="newCode" placeholder="ABC" maxlength="3" autocapitalize="characters" oninput="this.value=this.value.toUpperCase();onAcHint();render()"></div>
+        <div><label for="newReg">Full registration</label><input id="newReg" placeholder="C-GABC" autocapitalize="characters" oninput="this.value=this.value.toUpperCase();onAcHint()"></div>
+        <button class="btn" onclick="saveTail()">Save to list</button>
+      </div>
+      <p class="fhint">Вписаний код одразу працює. "Save to list" запамʼятає борт по алфавіту.</p>
+    </div>
+    <div class="frow inline">
+      <div class="lbl">
+        <b><label for="date">Date</label></b>
+      </div>
+      <div class="ctl"><button type="button" class="pickbtn datebtn" id="dateBtn" onclick="pickDate()"></button><input type="hidden" id="date"></div>
+    </div>
+  </section>
+
+  <!-- STATUS -->
+  <section class="card c-st collapsed" id="statusCard" aria-labelledby="h-st">
+    <h2 id="h-st"><button type="button" class="cardtoggle" id="statusToggle" aria-expanded="false" aria-controls="statusBody" onclick="toggleCard('status')"><span class="chev">▾</span>Status<span class="csum" id="statusSum"></span></button></h2>
+    <div class="cbody" id="statusBody">
+    <p class="sub">Стан запасів береться зі списку <b>Items</b> сам: порожній - "fully stocked", заповнений - "plane needs". Тут лише окремі позначки борту, вони комбінуються зі списком.</p>
+    <div class="flags">
+      <button type="button" class="flag-btn" id="winterBtn" aria-pressed="false" onclick="toggleFlag('winter')"><span class="box" aria-hidden="true">✓</span><span><b>Drinks removed (winter)</b><small>напої зняті від морозу</small></span></button>
+      <button type="button" class="flag-btn" id="offloadBtn" aria-pressed="false" onclick="toggleFlag('offload')"><span class="box" aria-hidden="true">✓</span><span><b>Offloaded</b><small>борт знято з рейсу</small></span></button>
+    </div>
+    <div class="frow" id="reasonWrap" style="display:none;margin-top:4px">
+      <div class="lbl"><b><label for="reason">Offload reason</label></b><p class="fhint">Чому зняли борт (піде в лист).</p></div>
+      <div class="ctl"><input id="reason" placeholder="IFS flight in the morning" oninput="render()"></div>
+    </div>
+    <div class="frow">
+      <div class="lbl"><b><label for="note">Note (optional)</label></b><p class="fhint">Будь-що ще - окремим рядком у листі.</p></div>
+      <div class="ctl"><input id="note" placeholder="напр. trolley seal replaced" oninput="render()"></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ITEMS -->
+  <section class="card c-it collapsed" id="itemsCard" aria-labelledby="h-it">
+    <h2 id="h-it"><button type="button" class="cardtoggle" id="itemsToggle" aria-expanded="false" aria-controls="itemsBody" onclick="toggleCard('items')"><span class="chev">▾</span>Items<span class="csum" id="itemsSum"></span></button></h2>
+    <div class="cbody" id="itemsBody">
+    <p class="sub">Заповнюй тільки те, що треба. Порожнє = є на борту. Можна не все.</p>
+    <div class="modeswitch">
+      <span class="modelabel" id="modeLabel">Restock list</span>
+      <button type="button" class="btn ghost modebtn" id="modeBtn" onclick="toggleMode()">Inventory count ▸</button>
+    </div>
+    <p class="fhint" id="modeHint" style="margin:0 0 10px"></p>
+    <table class="form">
+      <colgroup id="cols"></colgroup>
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <div class="add-row">
+      <input id="newItem" aria-label="New item name" placeholder="Нова позиція" onkeydown="if(event.key==='Enter')addItem()">
+      <select id="newCat" aria-label="Category" onchange="onNewCat()"></select>
+      <button class="btn ghost" onclick="addItem()">+ Add</button>
+    </div>
+    <div class="newcat" id="newCatWrap">
+      <label for="newCatName" class="fhint" style="font-weight:600">Нова категорія</label>
+      <input id="newCatName" placeholder="напр. Hot drinks">
+      <p class="fhint" style="margin-top:8px">Колір категорії:</p>
+      <div class="swatches" id="swatches"></div>
+    </div>
+    <p class="fhint" style="margin-top:8px">Список запамʼятовується: прибрав - не повернеться, додав - лишиться. Порожні категорії не показуються.</p>
+    <details>
+      <summary>Reset list to default menu</summary>
+      <p class="fhint">Прибирає твої правки і вантажить стандартне меню.</p>
+      <button class="btn ghost" onclick="resetMenu()">Reset menu</button>
+    </details>
+  </div>
+  </section>
+
+  <!-- DEPOSIT -->
+  <section class="card c-dp" aria-labelledby="h-dp">
+    <h2 id="h-dp">Deposit / Revenue</h2>
+    <div class="frow">
+      <div class="lbl"><b><label for="totalcash">Total cash on board, CAD</label></b>
+        <p class="fhint">Увесь кеш. Депозит = кеш мінус float, рахується сам.</p></div>
+      <div class="ctl"><input id="totalcash" inputmode="decimal" placeholder="0.00" oninput="render()"></div>
+    </div>
+    <div class="frow compact">
+      <div class="lbl"><b>Float kept on board (standard)</b></div>
+      <div class="ctl"><div class="static-val">CAD 50.00</div></div>
+    </div>
+    <div class="comp-row">
+      <button type="button" class="comp-btn" id="compBtn" aria-pressed="false" onclick="toggleComp()"><span class="box" aria-hidden="true">✓</span>Complimentary service</button>
+      <p class="fhint">Затримка/збій рейсу: роздали даром, продажів нема - депозиту нема.</p>
+      <input type="checkbox" id="complimentary" hidden>
+    </div>
+  </section>
+
+  <!-- PREVIEW -->
+  <section class="card c-pv" aria-labelledby="h-pv">
+    <h2 id="h-pv">Email preview</h2>
+    <div class="tosetup" id="toSetup">
+      <input id="mailTo" type="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Recipient, entered once" placeholder="Адреса розсилки - один раз">
+      <button class="btn" style="min-height:40px" onclick="saveTo()">Save</button>
+    </div>
+    <div class="preview">
+      <div class="to">To: <span id="pTo" style="user-select:all"></span> <button class="linkbtn" onclick="copyTo()">copy</button> <button class="linkbtn" id="toChange" onclick="showToSetup()">change</button></div>
+      <div class="subj" id="pSubj"></div>
+      <div id="pBody"></div>
+    </div>
+    <div class="copybar">
+      <a class="btn orange" id="openOutlook" href="#" rel="noopener" onclick="return beforeOpenOutlook(event)">Copy + open Outlook</a>
+      <button class="btn" onclick="copy('body')">Copy email only</button>
+    </div>
+    <p class="hint"><b>Спочатку відкрий цю сторінку в Safari</b> (кнопка Поділитися -> Open in Safari, або Add to Home Screen) - усередині застосунку Claude Outlook не відкривається. Далі: тап <b>Copy + open Outlook</b> (копіює лист і відкриває Outlook з адресою й темою) -> у тілі листа довгий тап -> Paste -> Send.</p>
+    <details class="manual" id="manualSend">
+      <summary>Outlook не відкрився? Ручний спосіб (працює завжди)</summary>
+      <ol class="msteps">
+        <li><button class="btn ghost" type="button" onclick="copy('subj')">Copy subject</button> -> відкрий Outlook сама -> New -> у полі Subject: Paste. У To почни вводити <b>FAC</b> - Outlook підставить адресу.</li>
+        <li>Повернись сюди (зліва вгорі "&lt; Claude" / "&lt; Safari") -> <b>Copy email</b> -> в Outlook у тілі листа Paste -> Send.</li>
+      </ol>
+    </details>
+    <p class="hint">Не відкрилось? <a id="owaLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">Outlook web (встав дизайн)</a> · <a id="mailLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">через Пошту iPhone</a></p>
+  </section>
+
+  <p class="hint" id="buildTag" style="text-align:center;margin:4px 0 24px">artifact v16 - 2026-11-04</p>
+</div>
+<div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="pkTitle" onclick="if(event.target===this)closePicker()">
+  <div class="sheet">
+    <div class="ph"><span id="pkTitle"></span><button type="button" class="btn ghost" onclick="closePicker()">Close</button></div>
+    <div class="grid" id="pkGrid"></div>
+    <div class="pfoot" id="pkFoot"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+// ===== Fleet: 17 Dash 8 tails (company count, Jun 2026; public registrations). HNI prefix not confirmed yet. =====
+const FLEET=[
+  ['CBK','C-GCBK'],['ESH','C-GESH'],['GRC','C-FGRC'],['HRC','C-FHRC'],['HNI',''],['HRJ','C-GHRJ'],['ION','C-GION'],
+  ['JYZ','C-GJYZ'],['LKY','C-GLKY'],['NCF','C-GNCF'],['PQO','C-GPQO'],['RGI','C-GRGI'],['UQY','C-FUQY'],
+  ['WPS','C-GWPS'],['YCM','C-GYCM'],['YCV','C-GYCV'],['ZPA','C-GZPA'],
+].map(([code,reg])=>({code,reg}));
+const FLOAT=50; // CAD, standard float kept on board
+// Recipient is entered once on the device and kept only in its local storage, never in this file.
+const LS_TO='pal_commissary_to';
+const getTo=()=>{ try{ return localStorage.getItem(LS_TO)||''; }catch(e){ return ''; } };
+function showToSetup(){ $('mailTo').value=getTo(); $('toSetup').classList.add('show'); $('mailTo').focus(); }
+function saveTo(){
+  const v=$('mailTo').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ $('mailTo').classList.add('invalid'); toast('Перевір адресу','err'); return; }
+  try{ localStorage.setItem(LS_TO,v); }catch(e){ toast('Не вдалося зберегти тут','err'); return; }
+  $('mailTo').classList.remove('invalid'); $('toSetup').classList.remove('show'); render(); toast('Адресу збережено');
+}
+const LS_TAILS='pal_commissary_custom_tails', LS_MENU='pal_commissary_menu_v2';
+// category colours, warm/charcoal/lime gamut from the styleguide (all pass white-text contrast)
+const PALETTE=['#d1551b','#4a6a08','#3b424c','#a3621a','#6b4a2e','#5c6470','#8a1f1c'];
+const OLD_PALETTE=['#1b4a8b','#1f7a5c','#6b4fa0','#0f7c8c','#8a5a2b','#4a5568','#b23a48'];
+const DEFAULT=[
+  {sec:'Drinks',color:'#d1551b'},{n:'Apple juice'},{n:'Cranberry juice'},{n:'Diet Pepsi'},{n:'Ginger ale'},
+  {n:'Iced tea (Brisk)'},{n:'Lemonade'},{n:'Mixed juice'},{n:'Orange crush'},{n:'Orange juice'},{n:'Pepsi'},{n:'Water'},
+  {sec:'Snacks',color:'#4a6a08'},{n:'Chips'},{n:'Cookies'},
+  {sec:'Supplies',color:'#3b424c'},{n:'Ear plugs'},{n:'Garbage bags (small)'},{n:'Napkins'},{n:'Plastic cups'},{n:'Wet wipes'},
+];
+const $=id=>document.getElementById(id);
+function lsGet(k){ try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;} }
+function lsSet(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ===== Unit memory: remember the most-used unit per item (learns on every Copy email) =====
+const LS_UNITS='pal_commissary_units';
+function unitStats(){ return lsGet(LS_UNITS)||{}; }
+function topUnit(name){ const s=unitStats()[name]; if(!s) return 'each'; let best='each',bc=0; for(const u in s){ if(s[u]>bc){bc=s[u];best=u;} } return best; }
+function recordUnits(){ const s=unitStats(); items.forEach(x=>{ if(!x.sec&&effQty(x)){ const u=x.unit||'each'; s[x.n]=s[x.n]||{}; s[x.n][u]=(s[x.n][u]||0)+1; } }); lsSet(LS_UNITS,s); }
+
+// ===== Aircraft =====
+function fleet(){ const m={}; FLEET.forEach(a=>m[a.code]=a); (lsGet(LS_TAILS)||[]).forEach(a=>m[a.code]=a);
+  return Object.values(m).sort((x,y)=>x.code.localeCompare(y.code)); }
+function buildSelect(sel){
+  const s=$('acSel');
+  s.innerHTML='<option value="">- select -</option>'+fleet().map(a=>`<option value="${esc(a.code)}">${esc(a.code)}</option>`).join('')+'<option value="__add">+ Add / type tail…</option>';
+  if(sel) s.value=sel; onAc();
+}
+function getAircraftCode(){ const v=$('acSel').value; return v==='__add' ? $('newCode').value.trim().toUpperCase() : v; }
+function onAcHint(){
+  const v=$('acSel').value, h=$('acHint');
+  if(v==='__add'){ const c=$('newCode').value.trim().toUpperCase(); h.textContent = c ? ($('newReg').value.trim()||('C-G'+c)) : ''; }
+  else if(v){ const a=fleet().find(x=>x.code===v); h.textContent=a?a.reg:''; }
+  else h.textContent='';
+}
+function onAc(){ const v=$('acSel').value; $('acBtn').textContent=v==='__add'?'+ New tail':(v||'- select -'); $('addPanel').classList.toggle('show',v==='__add'); onAcHint(); render(); }
+function saveTail(){
+  const c=$('newCode').value.trim().toUpperCase(); if(!/^[A-Z]{3}$/.test(c)){ toast('Код - 3 літери','err'); return; }
+  const r=$('newReg').value.trim().toUpperCase()||('C-G'+c);
+  const cust=(lsGet(LS_TAILS)||[]).filter(a=>a.code!==c); cust.push({code:c,reg:r}); lsSet(LS_TAILS,cust);
+  $('newCode').value=''; $('newReg').value=''; buildSelect(c); toast('Борт збережено');
+}
+
+// ===== Menu =====
+let items=[], mode='simple', winterRemoved=false, offloaded=false, pickedColor=PALETTE[3];
+const blank=x=>x.sec?{sec:x.sec,color:x.color||PALETTE[0]}:{n:x.n,start:'',end:'',qty:'',unit:topUnit(x.n)};
+function saveMenu(){ lsSet(LS_MENU, items.map(x=>x.sec?{sec:x.sec,color:x.color}:{n:x.n})); }
+function loadMenu(){ const m=lsGet(LS_MENU); let raw=(Array.isArray(m)&&m.length?m:DEFAULT);
+  // migrate old category colours to the new gamut, keep custom items/categories untouched
+  raw=raw.map(x=>{ if(x.sec){ const i=OLD_PALETTE.indexOf((x.color||'').toLowerCase()); if(i>=0) return {sec:x.sec,color:PALETTE[i]}; } return x; });
+  items=raw.map(blank); saveMenu(); refreshMenu(); }
+function resetMenu(){ try{localStorage.removeItem(LS_MENU);}catch(e){} items=DEFAULT.map(blank); refreshMenu(); toast('Меню скинуто'); }
+function refreshMenu(){ buildCatSelect(); renderTable(); render(); }
+const categories=()=>items.filter(x=>x.sec);
+
+function buildCatSelect(){
+  const s=$('newCat'), cur=s.value;
+  s.innerHTML=categories().map(c=>`<option value="${esc(c.sec)}">${esc(c.sec)}</option>`).join('')+'<option value="__newcat">+ New category</option>';
+  if(cur && [...s.options].some(o=>o.value===cur)) s.value=cur;
+  onNewCat();
+}
+function onNewCat(){ $('newCatWrap').classList.toggle('show',$('newCat').value==='__newcat'); }
+function buildSwatches(){
+  $('swatches').innerHTML=PALETTE.map(c=>`<button type="button" class="sw${c===pickedColor?' sel':''}" style="background:${c}" aria-label="Color ${c}" onclick="pickColor('${c}')"></button>`).join('');
+}
+function pickColor(c){ pickedColor=c; buildSwatches(); }
+
+function toggleMode(){ mode = mode==='simple'?'count':'simple';
+  $('modeLabel').textContent = mode==='simple'?'Restock list':'Inventory count';
+  $('modeBtn').textContent = mode==='simple'?'Inventory count ▸':'◂ Back to restock';
+  renderTable(); render(); }
+function toggleFlag(f){
+  if(f==='winter') winterRemoved=!winterRemoved;
+  if(f==='offload'){ offloaded=!offloaded; $('reasonWrap').style.display=offloaded?'flex':'none'; }
+  $('winterBtn').setAttribute('aria-pressed',String(winterRemoved));
+  $('offloadBtn').setAttribute('aria-pressed',String(offloaded));
+  render();
+}
+function renderTable(){
+  const simple=mode==='simple';
+  $('cols').innerHTML = simple
+    ? '<col class="c-item"><col class="c-x"><col class="c-qty"><col class="c-unit">'
+    : '<col class="c-item"><col class="c-x"><col class="c-man"><col class="c-man"><col class="c-pick">';
+  $('thead').innerHTML = simple
+    ? '<tr><th>Item</th><th></th><th>Qty</th><th>Unit</th></tr>'
+    : '<tr><th>Item</th><th></th><th>Start</th><th>End</th><th>Spent</th></tr>';
+  $('modeHint').textContent = simple
+    ? 'Тисни Qty - вибери число, Unit - штука/кейс/коробка. Одиниця запамʼятовується по позиції. Порожнє = є на борту.'
+    : 'Вписуй Start і End, Spent рахується сам.';
+  const cols=simple?4:5; let html='', cat='#d1551b', closed=false;
+  items.forEach((it,i)=>{
+    if(it.sec){
+      // hide empty categories; collapsed ones keep only the header with a filled-count
+      const next=items.slice(i+1); const end=next.findIndex(x=>x.sec); const group=end<0?next:next.slice(0,end);
+      cat=it.color||PALETTE[0]; closed=collapsedCats.has(it.sec);
+      const filled=group.filter(x=>simple?effQty(x):(x.start!==''||x.end!=='')).length;
+      if(group.length) html+=(html?`<tr class="gap" aria-hidden="true"><td colspan="${cols}"></td></tr>`:'')
+        +`<tr class="section-row${closed?' closed':''}" style="--cat:${cat}"><td colspan="${cols}"><button type="button" class="secbtn" aria-expanded="${!closed}" onclick="toggleCat(${i})"><span class="chev" style="display:inline-block;${closed?'transform:rotate(-90deg)':''}">▾</span>${esc(it.sec)}<span class="cnt">${filled?filled+' filled':''}</span></button></td></tr>`;
+      return;
+    }
+    if(closed) return;
+    const x=`<td class="xcell"><button class="del" aria-label="Remove ${esc(it.n)}" onclick="del(${i})">&times;</button></td>`;
+    if(simple){
+      html+=`<tr class="irow" style="--cat:${cat}"><td class="item-name">${esc(it.n)}</td>${x}
+        <td class="pick"><button type="button" class="pickbtn qpick" aria-label="${esc(it.n)} quantity" onclick="pickQty(${i})">${esc(it.qty||'')}</button></td>
+        <td class="pick"><button type="button" class="pickbtn upick" aria-label="${esc(it.n)} unit" onclick="pickUnit(${i})">${esc(it.unit||'each')}</button></td></tr>`;
+    }else{
+      const sp=(it.start!==''&&it.end!=='')?(Number(it.start)-Number(it.end)):'';
+      html+=`<tr class="irow" style="--cat:${cat}"><td class="item-name">${esc(it.n)}</td>${x}
+        <td><input class="num" inputmode="numeric" aria-label="${esc(it.n)} start" value="${esc(it.start||'')}" oninput="upd(${i},'start',this.value)"></td>
+        <td><input class="num" inputmode="numeric" aria-label="${esc(it.n)} end" value="${esc(it.end||'')}" oninput="upd(${i},'end',this.value)"></td>
+        <td class="spent" id="sp${i}">${sp}</td></tr>`;
+    }
+  });
+  $('tbody').innerHTML=html;
+}
+const LS_COLL='pal_commissary_collapsed';
+const collapsedCats=new Set(lsGet(LS_COLL)||[]);
+function toggleCat(i){ const n=items[i].sec; collapsedCats.has(n)?collapsedCats.delete(n):collapsedCats.add(n); lsSet(LS_COLL,[...collapsedCats]); renderTable(); }
+function toggleCard(n){ const c=$(n+'Card').classList.toggle('collapsed'); $(n+'Toggle').setAttribute('aria-expanded',String(!c)); }
+function upd(i,k,v){
+  items[i][k]=v;
+  if(mode==='count'){ const it=items[i], c=$('sp'+i); if(c) c.textContent=(it.start!==''&&it.end!=='')?(Number(it.start)-Number(it.end)):''; }
+  render();
+}
+function del(i){ items.splice(i,1); saveMenu(); refreshMenu(); }
+function addItem(){
+  const name=$('newItem').value.trim(); if(!name){ $('newItem').focus(); return; }
+  let cat=$('newCat').value, color=null;
+  if(cat==='__newcat'){ cat=$('newCatName').value.trim(); color=pickedColor; if(!cat){ toast('Назви категорію','err'); $('newCatName').focus(); return; } }
+  let si=items.findIndex(x=>x.sec===cat);
+  if(si<0){ items.push({sec:cat,color:color||PALETTE[0]}); si=items.length-1; }
+  let end=si+1; while(end<items.length && !items[end].sec) end++;
+  let pos=end; for(let j=si+1;j<end;j++){ if(name.toLowerCase()<items[j].n.toLowerCase()){ pos=j; break; } }
+  items.splice(pos,0,blank({n:name}));
+  $('newItem').value=''; $('newCatName').value='';
+  saveMenu(); refreshMenu(); $('newCat').value=cat; onNewCat(); toast('Додано');
+}
+
+// ===== Email =====
+const UNITS=['each','½ case','case','box','bag'];
+function unitPlural(u,n){ if(u==='each')return'each'; const m=n>1;
+  if(u==='½ case')return m?'½ cases':'½ case'; if(u==='case')return m?'cases':'case';
+  if(u==='box')return m?'boxes':'box'; if(u==='bag')return m?'bags':'bag'; return u; }
+const effQty=it=>(it.qty||'').trim();
+const qtyText=it=>{ const q=effQty(it); if(!q)return''; const n=parseInt(q,10)||1; return q+' '+unitPlural(it.unit||'each',n); };
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+// local date (valueAsDate uses UTC and flips to tomorrow in the evening in Winnipeg)
+const isoLocal=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function showDate(){ const v=$('date').value, b=$('dateBtn');
+  b.textContent=v?`${MONTHS[+v.slice(5,7)-1].slice(0,3)} ${+v.slice(8,10)}, ${v.slice(0,4)}`:'- select -';
+  b.classList.toggle('is-today', v===isoLocal(new Date())); }
+let calY, calM;
+function pickDate(){ const v=$('date').value||isoLocal(new Date()); calY=+v.slice(0,4); calM=+v.slice(5,7)-1; drawCal(); }
+function drawCal(){
+  const sel=$('date').value, today=isoLocal(new Date());
+  const first=new Date(calY,calM,1).getDay(), days=new Date(calY,calM+1,0).getDate();
+  let h=`<div class="calnav"><button type="button" data-nav="-1" aria-label="Previous month">‹</button><span>${MONTHS[calM]} ${calY}</span><button type="button" data-nav="1" aria-label="Next month">›</button></div>`;
+  h+=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="wd">${d}</div>`).join('');
+  for(let k=0;k<first;k++) h+='<div class="day blank" aria-hidden="true"></div>';
+  for(let d=1;d<=days;d++){ const iso=`${calY}-${String(calM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    h+=`<button type="button" class="day${iso===today?' today':''}${iso===sel?' sel':''}" data-day="${iso}">${d}</button>`; }
+  pickOpts=[{v:today,label:'Today',wide:true}];
+  pickCb=v=>{ $('date').value=v; clearMark($('dateBtn')); showDate(); render(); };
+  $('pkTitle').textContent='Date'; $('pkGrid').className='grid cal'; $('pkGrid').innerHTML=h;
+  $('pkFoot').innerHTML=`<button type="button" class="opt wide" data-k="0">Today</button>`;
+  $('picker').classList.add('show','full');
+}
+function fmtDate(){ const d=$('date').value; if(!d) return '';
+  const [y,m,day]=d.split('-'); return `${['January','February','March','April','May','June','July','August','September','October','November','December'][+m-1]} ${+day}, ${y}`; }
+function buildSubject(){ const r=getAircraftCode(), dt=fmtDate(); return [r,dt].filter(Boolean).join(' - ')||'(tail / date)'; }
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const money=n=>Number(n||0).toFixed(2);
+// condition flags add their own line(s); they combine with the needs/count list
+function conditionLines(){
+  const L=[];
+  if(winterRemoved) L.push('All drinks have been removed from the aircraft to prevent freezing.');
+  if(offloaded){ const r=$('reason').value.trim(); L.push('Aircraft offloaded'+(r?' due to '+r:'')+'.'); }
+  return L;
+}
+const noteText=()=>$('note').value.trim();
+const hasList=()=>mode==='count'?countRows().length>0:needRows().length>0;
+const needRows=()=>items.filter(x=>!x.sec&&effQty(x)).map(x=>({item:x.n,qty:qtyText(x)}));
+const countRows=()=>items.filter(x=>!x.sec&&(x.start!==''||x.end!=='')).map(x=>{
+  const sp=(x.start!==''&&x.end!=='')?(Number(x.start)-Number(x.end)):''; return {item:x.n,start:x.start||'-',end:x.end||'-',spent:sp===''?'-':sp}; });
+function computeMoney(){ const total=parseFloat($('totalcash').value)||0;
+  return {comp:$('complimentary').checked,total,floatKept:Math.min(total,FLOAT),deposit:Math.max(total-FLOAT,0)}; }
+
+function buildBodyText(){
+  const out=['Hi team,',''];
+  conditionLines().forEach(l=>out.push(l));
+  if(mode==='count') countRows().forEach(r=>out.push(`${r.item}: start ${r.start}, end ${r.end}, spent ${r.spent}`));
+  else { const rows=needRows(); if(rows.length){ out.push('Aircraft needs:'); rows.forEach(r=>out.push(`- ${cap(r.item)}: ${r.qty}`)); } }
+  if(!hasList() && !winterRemoved && !offloaded) out.push('Aircraft is fully stocked.');
+  const nt=noteText(); if(nt) out.push(nt);
+  out.push(''); const m=computeMoney();
+  if(m.comp) out.push('Complimentary service - no revenue.');
+  else { out.push('Deposit to safe: CAD '+money(m.deposit));
+    out.push(`Float retained on board: CAD ${money(m.floatKept)}. Total flight revenue: CAD ${money(m.total)}.`); }
+  return out.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+function buildBodyHTML(){
+  const F='font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif';
+  const p=`margin:0 0 12px;${F};font-size:16px;line-height:1.5;color:#1f2733`;
+  const th=`padding:8px 14px;border-bottom:2px solid #e67817;font-weight:bold;color:#14386b;background:#eef1f5;text-align:left;${F};font-size:15px`;
+  const td=(bg)=>`padding:7px 14px;border-bottom:1px solid #e3e8ef;background:${bg};text-align:left;${F};font-size:15px;color:#1f2733`;
+  let h=`<div style="${F};font-size:16px;line-height:1.5;color:#1f2733"><p style="${p}">Hi team,</p>`;
+  conditionLines().forEach(l=>{ h+=`<p style="${p}">${esc(l)}</p>`; });
+  if(mode==='count'){
+    const rows=countRows();
+    if(rows.length){
+      h+=`<table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 16px"><tr>${['Item','Start','End','Spent'].map(t=>`<td bgcolor="#eef4fb" style="${th}">${t}</td>`).join('')}</tr>`;
+      rows.forEach((r,i)=>{ const bg=i%2?'#f5f6f8':'#ffffff';
+        h+=`<tr><td bgcolor="${bg}" style="${td(bg)}">${esc(cap(r.item))}</td><td bgcolor="${bg}" style="${td(bg)}">${esc(r.start)}</td><td bgcolor="${bg}" style="${td(bg)}">${esc(r.end)}</td><td bgcolor="${bg}" style="${td(bg)};font-weight:bold;color:#e67817">${esc(r.spent)}</td></tr>`; });
+      h+='</table>';
+    }
+  }else{
+    const rows=needRows();
+    if(rows.length){
+      h+=`<p style="margin:0 0 6px;${F};font-size:16px;color:#1f2733"><b>Aircraft needs</b></p>`;
+      h+=`<table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 16px;min-width:300px"><tr><td bgcolor="#eef4fb" style="${th};padding-right:32px">Item</td><td bgcolor="#eef4fb" style="${th}">Quantity</td></tr>`;
+      rows.forEach((r,i)=>{ const bg=i%2?'#f5f6f8':'#ffffff';
+        h+=`<tr><td bgcolor="${bg}" style="${td(bg)};padding-right:32px">${esc(cap(r.item))}</td><td bgcolor="${bg}" style="${td(bg)};white-space:nowrap">${esc(r.qty)}</td></tr>`; });
+      h+='</table>';
+    }
+  }
+  if(!hasList() && !winterRemoved && !offloaded) h+=`<p style="${p}">Aircraft is fully stocked.</p>`;
+  const nt=noteText(); if(nt) h+=`<p style="${p}">${esc(nt)}</p>`;
+  const m=computeMoney();
+  const box=`padding:10px 16px;background:#fff6ee;border-left:4px solid #e67817;${F};color:#14386b`;
+  if(m.comp){
+    h+=`<table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse"><tr><td bgcolor="#fff6ee" style="${box};font-size:16px;font-weight:bold">Complimentary service - no revenue.</td></tr></table>`;
+  }else{
+    h+=`<table role="presentation" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 6px"><tr><td bgcolor="#fff6ee" style="${box}">`
+      +`<span style="font-size:15px;color:#14386b">Deposit to safe, CAD</span>&nbsp;&nbsp;<span style="font-size:24px;font-weight:bold;color:#14386b">${money(m.deposit)}</span></td></tr></table>`;
+    h+=`<p style="margin:0;${F};font-size:14px;color:#5f6b7a">Float retained on board: CAD ${money(m.floatKept)} &nbsp;·&nbsp; Total flight revenue: CAD ${money(m.total)}</p>`;
+  }
+  return h+'</div>';
+}
+function toggleComp(){ const c=$('complimentary'); c.checked=!c.checked; $('compBtn').setAttribute('aria-pressed',String(c.checked)); render(); }
+function render(){ const to=getTo(); { const f=[]; if(winterRemoved)f.push('Winter'); if(offloaded)f.push('Offloaded'); $('statusSum').textContent=f.join(' + '); } { const n=items.filter(x=>!x.sec&&(mode==='count'?(x.start!==''||x.end!==''):effQty(x))).length; $('itemsSum').textContent=n?n+' filled':''; } if($('openOutlook')){ const ok=to&&getAircraftCode(); $('openOutlook').href=ok?buildOutlookURL():'#'; $('mailLink').href=ok?buildMailto(false):'#'; $('owaLink').href=ok?buildOWAURL(false):'#'; } $('pTo').textContent=to||'не вказано'; $('toChange').textContent=to?'change':'set'; if(!to) $('toSetup').classList.add('show'); $('pSubj').textContent=buildSubject(); $('pBody').innerHTML=buildBodyHTML(); }
+
+// ===== Validation + copy =====
+function clearMark(el){ el.classList.remove('invalid'); }
+function validate(){
+  let ok=true;
+  if(!getAircraftCode()){ $('acBtn').classList.add('invalid'); ok=false; }
+  if(!$('date').value){ $('dateBtn').classList.add('invalid'); ok=false; }
+  return ok;
+}
+function checkRequired(){
+  if(validate()) return true;
+  toast('Вкажи борт і дату','err'); window.scrollTo({top:0,behavior:'smooth'}); return false;
+}
+// Clipboard API needs https. Offline (file / data: page from the Shortcut) falls back to
+// selection copy, which keeps the formatting and must run synchronously inside the tap.
+const canClipAPI=()=>window.isSecureContext && navigator.clipboard && window.ClipboardItem;
+function execCopyNode(node){
+  const sel=getSelection(), r=document.createRange(); r.selectNodeContents(node);
+  sel.removeAllRanges(); sel.addRange(r);
+  let ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+  sel.removeAllRanges(); return ok;
+}
+function execCopyText(t){
+  const ta=document.createElement('textarea'); ta.value=t; ta.setAttribute('readonly','');
+  ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px'; document.body.appendChild(ta);
+  ta.select(); ta.setSelectionRange(0,t.length);
+  let ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+  ta.remove(); return ok;
+}
+// returns 'html' | 'text' | false
+async function copyBody(){
+  render(); if(execCopyNode($('pBody'))) return 'html';
+  if(!canClipAPI()) return false;
+  try{
+    await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([buildBodyHTML()],{type:'text/html'}),'text/plain':new Blob([buildBodyText()],{type:'text/plain'})})]);
+    return 'html';
+  }catch(e){
+    try{ await navigator.clipboard.writeText(buildBodyText()); return 'text'; }catch(e2){ return false; }
+  }
+}
+async function copy(what){
+  if(!checkRequired()) return;
+  if(what==='subj'){
+    let ok=false;
+    if(canClipAPI()){ try{ await navigator.clipboard.writeText(buildSubject()); ok=true; }catch(e){} }
+    else ok=execCopyText(buildSubject());
+    toast(ok?'Тему скопійовано':'Копіювання недоступне тут', ok?'':'err');
+    return;
+  }
+  const r=await copyBody();
+  if(r) recordUnits();
+  toast(r==='html'?'Лист скопійовано':r==='text'?'Скопійовано як текст':'Копіювання недоступне тут', r?'':'err');
+}
+// ===== Full-screen picker (native iPad selects show a short scrolling list) =====
+let pickOpts=[], pickCb=null;
+function openPicker(title,opts,cur,cb,kind){
+  pickOpts=opts; pickCb=cb; $('pkTitle').textContent=title;
+  const g=$('pkGrid'); g.className='grid'+(kind?' '+kind:'');
+  const btn=(o,k,cls='')=>`<button type="button" class="opt${cls}${o.v===cur&&o.v!==''?' sel':''}" data-k="${k}">${esc(o.label)}</button>`;
+  let html='';
+  if(kind==='tails'){
+    // group codes under their first letter
+    const groups=[]; opts.forEach((o,k)=>{ if(o.letter) groups.push({L:o.letter,b:[]}); else if(!o.wide) groups[groups.length-1].b.push(btn(o,k)); });
+    html=groups.map(gr=>`<div class="tg" style="grid-column:span ${gr.b.length}"><div class="tl" aria-hidden="true">${esc(gr.L)}</div><div class="tt" style="grid-template-columns:repeat(${gr.b.length},1fr)">${gr.b.join('')}</div></div>`).join('');
+  }else{
+    html=opts.map((o,k)=>o.wide?'':btn(o,k)).join('');
+  }
+  g.innerHTML=html;
+  $('pkFoot').innerHTML=opts.map((o,k)=>o.wide?btn(o,k,' wide'):'').join('');
+  $('picker').classList.add('show','full');
+}
+function closePicker(){ $('picker').classList.remove('show'); }
+$('pkFoot').addEventListener('click',e=>{ const b=e.target.closest('.opt'); if(!b) return; const o=pickOpts[+b.dataset.k]; closePicker(); pickCb(o.v); });
+$('pkGrid').addEventListener('click',e=>{ const nav=e.target.closest('[data-nav]'); if(nav){ calM+=+nav.dataset.nav; if(calM<0){calM=11;calY--;} if(calM>11){calM=0;calY++;} drawCal(); return; }
+  const day=e.target.closest('[data-day]'); if(day){ closePicker(); pickCb(day.dataset.day); return; } });
+$('pkGrid').addEventListener('click',e=>{ if(e.target.closest('[data-nav],[data-day]')) return; const b=e.target.closest('.opt'); if(!b) return; const o=pickOpts[+b.dataset.k]; closePicker(); pickCb(o.v); });
+function pickTail(){
+  const opts=[]; let last='';
+  fleet().forEach(a=>{ const L=a.code[0]; if(L!==last){ opts.push({letter:L}); last=L; } opts.push({v:a.code,label:a.code}); });
+  opts.push({v:'__add',label:'+ Add / type tail',wide:true});
+  openPicker('Aircraft tail number',opts,$('acSel').value,v=>{ $('acSel').value=v; clearMark($('acBtn')); onAc(); },'tails');
+}
+function pickQty(i){
+  const opts=Array.from({length:20},(_,k)=>({v:String(k+1),label:String(k+1)})).concat([{v:'',label:'Clear',wide:true}]);
+  openPicker(items[i].n+' - quantity',opts,items[i].qty||'',v=>{ items[i].qty=v; renderTable(); render(); },'nums');
+}
+function pickUnit(i){
+  const opts=UNITS.map(u=>({v:u,label:u}));
+  openPicker(items[i].n+' - unit',opts,items[i].unit||'each',v=>{ items[i].unit=v||'each'; renderTable(); render(); });
+}
+
+function buildMailto(withBody){
+  let q='subject='+encodeURIComponent(buildSubject());
+  if(withBody) q+='&body='+encodeURIComponent(buildBodyText().replace(/\n/g,'\r\n'));
+  return 'mailto:'+encodeURIComponent(getTo()).replace('%40','@')+'?'+q;
+}
+function sendReady(){
+  if(!checkRequired()) return false;
+  if(!getTo()){ showToSetup(); toast('Впиши адресу розсилки один раз','err'); return false; }
+  return true;
+}
+function sendLink(e){
+  if(!sendReady()){ e.preventDefault(); return false; }
+  render(); const a=e.currentTarget;
+  // some signed-in viewers get a working window.open; otherwise the plain link (new tab) is the attempt
+  let w=null; try{ w=window.open(a.href,'_blank'); }catch(err){}
+  if(w){ e.preventDefault(); }
+  toast('Відкриваю Outlook');
+  setTimeout(()=>{ if(document.visibilityState==='visible') $('manualSend').open=true; }, 1800); // still here -> show the manual way
+  return !w;
+}
+function beforeOpenOutlook(e){
+  if(!sendReady()){ e.preventDefault(); return false; }
+  render();
+  // copy the designed letter synchronously, inside the tap, so the formatting survives
+  const ok=execCopyNode($('pBody'));
+  if(ok) recordUnits();
+  toast(ok?'Лист у буфері - встав у тіло Outlook':'Скопіюй лист вручну', ok?'':'err');
+  // still here after a moment -> Outlook did not open (usually opened inside Claude, not Safari)
+  setTimeout(()=>{ if(document.visibilityState==='visible') $('manualSend').open=true; }, 1800);
+  return true; // let the tap navigate to the ms-outlook:// link in the href
+}
+// Outlook app compose link: opens Outlook even when Apple Mail is the default mail app
+// Outlook on the web compose page: a plain https link, which the artifact frame always lets through
+function buildOWAURL(withBody){ return 'https://outlook.office.com/mail/deeplink/compose?to='+encodeURIComponent(getTo())+'&subject='+encodeURIComponent(buildSubject())+(withBody?'&body='+encodeURIComponent(buildBodyText()):''); }
+function buildOutlookURL(){ return 'ms-outlook://compose?to='+encodeURIComponent(getTo())+'&subject='+encodeURIComponent(buildSubject()); }
+async function copyTo(){ const t=getTo(); if(!t) return showToSetup();
+  let ok=false; try{ await navigator.clipboard.writeText(t); ok=true; }catch(e){ ok=execCopyText(t); }
+  toast(ok?'Адресу скопійовано':'Виділи адресу вручну', ok?'':'err'); }
+let toastT; function toast(msg,kind){ const el=$('toast'); el.textContent=msg; el.className='toast show'+(kind==='err'?' err':''); clearTimeout(toastT); toastT=setTimeout(()=>el.className='toast',1600); }
+
+// ===== Init =====
+$('date').value=isoLocal(new Date()); showDate();
+buildSwatches(); buildSelect(); loadMenu();
+</script>
+
+</body></html>
