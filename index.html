@@ -123,6 +123,13 @@
   tr.section-row.sec-other .secsub{font-weight:600;text-transform:none;letter-spacing:0;margin-left:8px;color:#6b7280}
   tr.section-row.sec-other .cnt{background:#fff;color:#4b5563}
   tr.irow-other .item-name{color:#4b5563;font-weight:500}
+  /* popularity: thin line between most-used items and the A-Z rest */
+  table.form tr.rankdiv td{padding:0;height:1px;line-height:0;font-size:0;background:#c5cbd4}
+  .c-sx{--acc:var(--lime-ink)}
+  table.stats{width:100%;border-collapse:collapse;font-size:var(--fs-s);margin-bottom:6px}
+  table.stats th{text-align:left;color:var(--muted);font-weight:700;padding:6px 8px;border-bottom:2px solid var(--line)}
+  table.stats td{padding:7px 8px;border-bottom:1px solid var(--line-soft)}
+  table.stats td.n{font-weight:800;color:var(--o2)}
   td.xcell{text-align:center}
   .del{background:none;border:none;color:var(--err);cursor:pointer;font-size:26px;line-height:1;
     width:48px;height:48px;border-radius:24px}
@@ -402,6 +409,20 @@
     </div>
   </section>
 
+  <!-- STATS -->
+  <section class="card c-sx collapsed" id="statsCard" aria-labelledby="h-sx">
+    <h2 id="h-sx"><button type="button" class="cardtoggle" id="statsToggle" aria-expanded="false" aria-controls="statsBody" onclick="toggleCard('stats')"><span class="chev">▾</span>Stats<span class="csum" id="statsSum"></span></button></h2>
+    <div class="cbody" id="statsBody">
+    <p class="sub">Останні 90 днів. Рахується при Copy body, 1 раз на борт + дату (повторне копіювання не подвоює). Позиції, що траплялись 2+ рази, стають першими у своїй категорії (до 3), під тонкою лінією - решта за алфавітом. Порядок оновлюється при наступному відкритті сторінки. Дані живуть тільки на цьому телефоні.</p>
+    <div id="statsList"></div>
+    <details>
+      <summary>Reset stats</summary>
+      <p class="fhint">Стирає всю статистику на цьому пристрої. Меню і одиниці не чіпає.</p>
+      <button class="btn ghost" onclick="resetStats()">Reset stats</button>
+    </details>
+    </div>
+  </section>
+
   <!-- PREVIEW -->
   <section class="card c-pv" aria-labelledby="h-pv">
     <h2 id="h-pv">Email preview</h2>
@@ -430,7 +451,7 @@
     <p class="hint">Не відкрилось? <a id="owaLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">Outlook web (встав дизайн)</a> · <a id="mailLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">через Пошту iPhone</a></p>
   </section>
 
-  <p class="hint" id="buildTag" style="text-align:center;margin:4px 0 24px">artifact v24 - 2026-11-06 - standard load + Other</p>
+  <p class="hint" id="buildTag" style="text-align:center;margin:4px 0 24px">artifact v25 - 2026-11-06 - popularity ranking + stats</p>
 </div>
 <div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="pkTitle" onclick="if(event.target===this)closePicker()">
   <div class="sheet">
@@ -586,17 +607,27 @@ function renderTable(){
   const cols=simple?4:5; let html='', cat='#d1551b', closed=false, other=false;
   const hint=n=>other?'<small class="par">Not on standard load</small>':(PAR[n]?`<small class="par">Load: ${esc(PAR[n])}</small>`:'');
   items.forEach((it,i)=>{
-    if(it.sec){
-      // hide empty categories; collapsed ones keep only the header with a filled-count
-      const next=items.slice(i+1); const end=next.findIndex(x=>x.sec); const group=end<0?next:next.slice(0,end);
-      cat=it.color||PALETTE[0]; closed=collapsedCats.has(it.sec); other=it.sec===OTHER;
-      const filled=group.filter(x=>simple?effQty(x):(x.start!==''||x.end!=='')).length;
-      const label=other?`${esc(it.sec)}<span class="secsub">not on standard load</span>`:esc(it.sec);
-      if(group.length) html+=(html?`<tr class="gap${other?' gap-other':''}" aria-hidden="true"><td colspan="${cols}"></td></tr>`:'')
-        +`<tr class="section-row${closed?' closed':''}${other?' sec-other':''}" style="--cat:${cat}"><td colspan="${cols}"><button type="button" class="secbtn" aria-expanded="${!closed}" onclick="toggleCat(${i})"><span class="chev" style="display:inline-block;${closed?'transform:rotate(-90deg)':''}">▾</span>${label}<span class="cnt">${filled?filled+' filled':(other&&closed?group.length+(group.length===1?' item':' items'):'')}</span></button></td></tr>`;
-      return;
-    }
+    if(!it.sec) return;
+    // hide empty categories; collapsed ones keep only the header with a filled-count
+    const idxs=[]; for(let j=i+1;j<items.length&&!items[j].sec;j++) idxs.push(j);
+    const group=idxs.map(j=>items[j]);
+    cat=it.color||PALETTE[0]; closed=collapsedCats.has(it.sec); other=it.sec===OTHER;
+    const filled=group.filter(x=>simple?effQty(x):(x.start!==''||x.end!=='')).length;
+    const label=other?`${esc(it.sec)}<span class="secsub">not on standard load</span>`:esc(it.sec);
+    if(group.length) html+=(html?`<tr class="gap${other?' gap-other':''}" aria-hidden="true"><td colspan="${cols}"></td></tr>`:'')
+      +`<tr class="section-row${closed?' closed':''}${other?' sec-other':''}" style="--cat:${cat}"><td colspan="${cols}"><button type="button" class="secbtn" aria-expanded="${!closed}" onclick="toggleCat(${i})"><span class="chev" style="display:inline-block;${closed?'transform:rotate(-90deg)':''}">▾</span>${label}<span class="cnt">${filled?filled+' filled':(other&&closed?group.length+(group.length===1?' item':' items'):'')}</span></button></td></tr>`;
     if(closed) return;
+    // most used first (90-day snapshot taken when the page opened, so rows never jump while filling), thin line, then A-Z
+    const top=idxs.filter(j=>(rankSnap[items[j].n]||0)>=RANK_MIN)
+      .sort((a,b)=>(rankSnap[items[b].n]-rankSnap[items[a].n])||items[a].n.localeCompare(items[b].n)).slice(0,RANK_TOP);
+    const rest=idxs.filter(j=>!top.includes(j));
+    top.forEach(j=>{ html+=itemRow(items[j],j); });
+    if(top.length&&rest.length) html+=`<tr class="rankdiv" aria-hidden="true"><td colspan="${cols}"></td></tr>`;
+    rest.forEach(j=>{ html+=itemRow(items[j],j); });
+  });
+  $('tbody').innerHTML=html;
+  function itemRow(it,i){
+    let html='';
     const x=`<td class="xcell"><button class="del" aria-label="Remove ${esc(it.n)}" onclick="del(${i})">&times;</button></td>`;
     if(simple){
       html+=`<tr class="irow${other?' irow-other':''}" style="--cat:${cat}"><td class="item-name">${esc(it.n)}${hint(it.n)}</td>${x}
@@ -609,9 +640,40 @@ function renderTable(){
         <td><input class="num" inputmode="numeric" aria-label="${esc(it.n)} end" value="${esc(it.end||'')}" oninput="upd(${i},'end',this.value)"></td>
         <td class="spent" id="sp${i}">${sp}</td></tr>`;
     }
-  });
-  $('tbody').innerHTML=html;
+    return html;
+  }
 }
+
+// ===== Usage stats: which items get reported most (last 90 days) =====
+// One entry per tail + date; copying the same report again overwrites it, so nothing is double-counted.
+const LS_USAGE='pal_commissary_usage', WINDOW_DAYS=90, RANK_MIN=2, RANK_TOP=3;
+let rankSnap={};
+function usageLog(){ const l=lsGet(LS_USAGE); return l&&typeof l==='object'?l:{}; }
+function cutoffISO(){ const d=new Date(); d.setDate(d.getDate()-WINDOW_DAYS); return isoLocal(d); }
+function usageCounts(){
+  const log=usageLog(), cut=cutoffISO(), c={}, last={}; let n=0;
+  for(const k in log){ const e=log[k]; if(!e||!Array.isArray(e.items)||e.d<cut) continue; n++;
+    e.items.forEach(x=>{ c[x]=(c[x]||0)+1; if(!last[x]||e.d>last[x]) last[x]=e.d; }); }
+  return {c,last,n};
+}
+function recordUsage(){
+  const tail=getAircraftCode(), d=$('date').value; if(!tail||!d) return;
+  const names=items.filter(x=>!x.sec&&(mode==='count'?(x.start!==''||x.end!==''):effQty(x))).map(x=>x.n);
+  const log=usageLog(), cut=cutoffISO();
+  for(const k in log){ if(!log[k]||log[k].d<cut) delete log[k]; }
+  if(names.length) log[tail+'|'+d]={d,tail,items:names}; else delete log[tail+'|'+d];
+  lsSet(LS_USAGE,log); renderStats();
+}
+function renderStats(){
+  const {c,last,n}=usageCounts();
+  $('statsSum').textContent=n?n+(n===1?' report':' reports'):'';
+  const rows=Object.keys(c).sort((a,b)=>(c[b]-c[a])||a.localeCompare(b));
+  if(!rows.length){ $('statsList').innerHTML='<p class="fhint">Ще нема звітів. Статистика зʼявиться після першого Copy body.</p>'; return; }
+  const short=iso=>`${MONTHS[+iso.slice(5,7)-1].slice(0,3)} ${+iso.slice(8,10)}`;
+  $('statsList').innerHTML=`<p class="fhint" style="margin:0 0 8px">${n} ${n===1?'report':'reports'} за 90 днів</p><table class="stats"><thead><tr><th>Item</th><th>Times</th><th>Last</th></tr></thead><tbody>`
+    +rows.map(k=>`<tr><td>${esc(k)}</td><td class="n">${c[k]}</td><td>${short(last[k])}</td></tr>`).join('')+'</tbody></table>';
+}
+function resetStats(){ try{localStorage.removeItem(LS_USAGE);}catch(e){} renderStats(); toast('Статистику скинуто'); }
 const LS_COLL='pal_commissary_collapsed', LS_OTHER_INIT='pal_commissary_other_init';
 const collapsedCats=new Set(lsGet(LS_COLL)||[]);
 // Other starts collapsed once per device; after that the user's own open/closed choice is kept
@@ -789,7 +851,7 @@ async function copy(what){
     return;
   }
   const r=await copyBody();
-  if(r) recordUnits();
+  if(r){ recordUnits(); recordUsage(); }
   toast(r==='html'?'Лист скопійовано':r==='text'?'Скопійовано як текст':'Копіювання недоступне тут', r?'':'err');
 }
 // ===== Full-screen picker (native iPad selects show a short scrolling list) =====
@@ -855,7 +917,7 @@ function beforeOpenOutlook(e){
   render();
   // copy the designed letter synchronously, inside the tap, so the formatting survives
   const ok=execCopyNode($('pBody'));
-  if(ok) recordUnits();
+  if(ok){ recordUnits(); recordUsage(); }
   toast(ok?'Лист у буфері - встав у тіло Outlook':'Скопіюй лист вручну', ok?'':'err');
   // still here after a moment -> Outlook did not open (usually opened inside Claude, not Safari)
   setTimeout(()=>{ if(document.visibilityState==='visible') $('manualSend').open=true; }, 1800);
@@ -872,7 +934,8 @@ let toastT; function toast(msg,kind){ const el=$('toast'); el.textContent=msg; e
 
 // ===== Init =====
 $('date').value=isoLocal(new Date()); showDate();
-buildSwatches(); buildSelect(); loadMenu();
+rankSnap=usageCounts().c; // ranking snapshot, fixed until the page is opened again
+buildSwatches(); buildSelect(); loadMenu(); renderStats();
 </script>
 
 </body></html>
