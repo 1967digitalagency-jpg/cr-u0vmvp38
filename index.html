@@ -116,6 +116,13 @@
   tr.irow:nth-child(even) td{background:var(--zebra)}
   tr.irow td:first-child{border-left:6px solid var(--cat,#d1551b);padding-left:10px}
   .item-name{font-weight:600;overflow-wrap:anywhere}
+  .item-name .par{display:block;font-size:12px;font-weight:400;color:var(--muted);line-height:1.3;margin-top:1px}
+  /* Other: items off the standard load list - quiet grey band, collapsed by default */
+  tr.gap-other td{height:22px}
+  tr.section-row.sec-other td{background:#eceef1;color:#4b5563;font-size:var(--fs-s);letter-spacing:.6px;padding:10px 12px}
+  tr.section-row.sec-other .secsub{font-weight:600;text-transform:none;letter-spacing:0;margin-left:8px;color:#6b7280}
+  tr.section-row.sec-other .cnt{background:#fff;color:#4b5563}
+  tr.irow-other .item-name{color:#4b5563;font-weight:500}
   td.xcell{text-align:center}
   .del{background:none;border:none;color:var(--err);cursor:pointer;font-size:26px;line-height:1;
     width:48px;height:48px;border-radius:24px}
@@ -423,7 +430,7 @@
     <p class="hint">Не відкрилось? <a id="owaLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">Outlook web (встав дизайн)</a> · <a id="mailLink" href="#" target="_blank" rel="noopener" onclick="return sendLink(event)">через Пошту iPhone</a></p>
   </section>
 
-  <p class="hint" id="buildTag" style="text-align:center;margin:4px 0 24px">artifact v19 - 2026-11-04</p>
+  <p class="hint" id="buildTag" style="text-align:center;margin:4px 0 24px">artifact v24 - 2026-11-06 - standard load + Other</p>
 </div>
 <div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="pkTitle" onclick="if(event.target===this)closePicker()">
   <div class="sheet">
@@ -453,16 +460,48 @@ function saveTo(){
   try{ localStorage.setItem(LS_TO,v); }catch(e){ toast('Не вдалося зберегти тут','err'); return; }
   $('mailTo').classList.remove('invalid'); $('toSetup').classList.remove('show'); render(); toast('Адресу збережено');
 }
-const LS_TAILS='pal_commissary_custom_tails', LS_MENU='pal_commissary_menu_v2';
+const LS_TAILS='pal_commissary_custom_tails', LS_MENU='pal_commissary_menu_v4', LS_MENU_V3='pal_commissary_menu_v3', LS_MENU_V2='pal_commissary_menu_v2';
 // category colours, warm/charcoal/lime gamut from the styleguide (all pass white-text contrast)
 const PALETTE=['#d1551b','#4a6a08','#3b424c','#a3621a','#6b4a2e','#5c6470','#8a1f1c'];
 const OLD_PALETTE=['#1b4a8b','#1f7a5c','#6b4fa0','#0f7c8c','#8a5a2b','#4a5568','#b23a48'];
+// Standard load per aircraft - manager's email (commissary reweighed), received 2026-11-06.
+// par = quantity to carry on board; u = default unit for the restock picker.
 const DEFAULT=[
-  {sec:'Drinks',color:'#d1551b'},{n:'Apple juice'},{n:'Cranberry juice'},{n:'Diet Pepsi'},{n:'Ginger ale'},
-  {n:'Iced tea (Brisk)'},{n:'Lemonade'},{n:'Mixed juice'},{n:'Orange crush'},{n:'Orange juice'},{n:'Pepsi'},{n:'Water'},
-  {sec:'Snacks',color:'#4a6a08'},{n:'Chips'},{n:'Cookies'},
-  {sec:'Supplies',color:'#3b424c'},{n:'Ear plugs'},{n:'Garbage bags (small)'},{n:'Napkins'},{n:'Plastic cups'},{n:'Wet wipes'},
+  {sec:'Drinks',color:'#d1551b'},
+  {n:'Diet Pepsi',par:'1 case (12 pk)',u:'case'},{n:'Ginger ale',par:'1 case (12 pk)',u:'case'},
+  {n:'Iced tea (Brisk)',par:'2 cases (12 pk)',u:'case'},{n:'Mixed juice',par:'1 case (24 pk) - assorted: apple, cranberry, lemonade',u:'case'},
+  {n:'Orange crush',par:'1 case (12 pk)',u:'case'},{n:'Pepsi',par:'1 case (24 pk)',u:'case'},
+  {n:'Water',par:'15 bottles (1.5 L)',u:'bottle'},
+  {sec:'Snacks',color:'#4a6a08'},
+  {n:'Chips',par:'2 cases',u:'case'},{n:'Cookies',par:'2 bags (50 pc each)',u:'bag'},
+  {sec:'Service',color:'#a3621a'},
+  {n:'Hot water carafes',par:'2 - once hot water service is back',u:'each'},{n:'Ice',par:'1 ice bucket & ice',u:'each'},
+  {sec:'Dry goods',color:'#3b424c'},
+  {n:'Beverage cups',par:'2 sleeves',u:'sleeve'},{n:'Coffee mate',par:'30 packs',u:'each'},
+  {n:'Coffee sticks',par:'30',u:'each'},{n:'Disinfectant wipes',par:'1 pack',u:'pack'},
+  {n:'Ear plugs',par:'1 bag (25)',u:'bag'},{n:'Garbage bags (large)',par:'10',u:'each'},
+  {n:'Garbage bags (small)',par:'10',u:'each'},{n:'Gloves',par:'1 box',u:'box'},
+  {n:'Hand sanitizer',par:'1 bottle',u:'bottle'},{n:'Hot cup lids',par:'1 sleeve',u:'sleeve'},
+  {n:'Hot cups',par:'1 sleeve',u:'sleeve'},{n:'Jet scent',par:'1 bottle',u:'bottle'},
+  {n:'Masks',par:'1 pack',u:'pack'},{n:'Menstrual products',par:'12',u:'each'},
+  {n:'Napkins',par:'1 pack',u:'pack'},{n:'Sugar packets',par:'30',u:'each'},
+  {n:'Sweetener packets',par:'30',u:'each'},{n:'Tea bags',par:'30',u:'each'},
+  {n:'Toilet paper',par:'3 rolls',u:'roll'},{n:'Wetnaps',par:'1 pack (34 strips of 3 = 102)',u:'pack'},
+  // everything not on the standard load list: grey, collapsed by default, menu is not final yet
+  {sec:'Other',color:'#6b7280'},
+  {n:'Orange juice',u:'each'},
 ];
+const OTHER='Other';
+const PAR={}, DEF_UNIT={}; DEFAULT.forEach(x=>{ if(x.n){ PAR[x.n]=x.par||''; DEF_UNIT[x.n]=x.u||'each'; } });
+// old menu names that now live under another item (one assorted juice case, renamed supplies)
+const ALIASES={'Apple juice':'Mixed juice','Cranberry juice':'Mixed juice','Lemonade':'Mixed juice','Plastic cups':'Beverage cups','Wet wipes':'Wetnaps'};
+// carry items added on the device in an older menu over to the new one, into Other
+function migrateOld(){
+  const old=lsGet(LS_MENU_V3)||lsGet(LS_MENU_V2); if(!Array.isArray(old)||!old.length) return null;
+  const base=DEFAULT.map(x=>({...x})), known=new Set(Object.keys(ALIASES).concat(Object.keys(PAR)));
+  old.forEach(x=>{ if(x.sec||!x.n||known.has(x.n)) return; base.push({n:x.n}); known.add(x.n); }); // Other is the last section
+  return base;
+}
 const $=id=>document.getElementById(id);
 function lsGet(k){ try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;} }
 function lsSet(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
@@ -471,7 +510,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 // ===== Unit memory: remember the most-used unit per item (learns on every Copy email) =====
 const LS_UNITS='pal_commissary_units';
 function unitStats(){ return lsGet(LS_UNITS)||{}; }
-function topUnit(name){ const s=unitStats()[name]; if(!s) return 'each'; let best='each',bc=0; for(const u in s){ if(s[u]>bc){bc=s[u];best=u;} } return best; }
+function topUnit(name){ const s=unitStats()[name]; const def=DEF_UNIT[name]||'each'; if(!s) return def; let best=def,bc=0; for(const u in s){ if(s[u]>bc){bc=s[u];best=u;} } return best; }
 function recordUnits(){ const s=unitStats(); items.forEach(x=>{ if(!x.sec&&effQty(x)){ const u=x.unit||'each'; s[x.n]=s[x.n]||{}; s[x.n][u]=(s[x.n][u]||0)+1; } }); lsSet(LS_UNITS,s); }
 
 // ===== Aircraft =====
@@ -501,7 +540,7 @@ function saveTail(){
 let items=[], mode='simple', winterRemoved=false, offloaded=false, pickedColor=PALETTE[3];
 const blank=x=>x.sec?{sec:x.sec,color:x.color||PALETTE[0]}:{n:x.n,start:'',end:'',qty:'',unit:topUnit(x.n)};
 function saveMenu(){ lsSet(LS_MENU, items.map(x=>x.sec?{sec:x.sec,color:x.color}:{n:x.n})); }
-function loadMenu(){ const m=lsGet(LS_MENU); let raw=(Array.isArray(m)&&m.length?m:DEFAULT);
+function loadMenu(){ const m=lsGet(LS_MENU); let raw=(Array.isArray(m)&&m.length?m:(migrateOld()||DEFAULT));
   // migrate old category colours to the new gamut, keep custom items/categories untouched
   raw=raw.map(x=>{ if(x.sec){ const i=OLD_PALETTE.indexOf((x.color||'').toLowerCase()); if(i>=0) return {sec:x.sec,color:PALETTE[i]}; } return x; });
   items=raw.map(blank); saveMenu(); refreshMenu(); }
@@ -513,6 +552,7 @@ function buildCatSelect(){
   const s=$('newCat'), cur=s.value;
   s.innerHTML=categories().map(c=>`<option value="${esc(c.sec)}">${esc(c.sec)}</option>`).join('')+'<option value="__newcat">+ New category</option>';
   if(cur && [...s.options].some(o=>o.value===cur)) s.value=cur;
+  else if([...s.options].some(o=>o.value===OTHER)) s.value=OTHER; // new items land in Other by default
   onNewCat();
 }
 function onNewCat(){ $('newCatWrap').classList.toggle('show',$('newCat').value==='__newcat'); }
@@ -543,26 +583,28 @@ function renderTable(){
   $('modeHint').textContent = simple
     ? 'Тисни Qty - вибери число, Unit - штука/кейс/коробка. Одиниця запамʼятовується по позиції. Порожнє = є на борту.'
     : 'Вписуй Start і End, Spent рахується сам.';
-  const cols=simple?4:5; let html='', cat='#d1551b', closed=false;
+  const cols=simple?4:5; let html='', cat='#d1551b', closed=false, other=false;
+  const hint=n=>other?'<small class="par">Not on standard load</small>':(PAR[n]?`<small class="par">Load: ${esc(PAR[n])}</small>`:'');
   items.forEach((it,i)=>{
     if(it.sec){
       // hide empty categories; collapsed ones keep only the header with a filled-count
       const next=items.slice(i+1); const end=next.findIndex(x=>x.sec); const group=end<0?next:next.slice(0,end);
-      cat=it.color||PALETTE[0]; closed=collapsedCats.has(it.sec);
+      cat=it.color||PALETTE[0]; closed=collapsedCats.has(it.sec); other=it.sec===OTHER;
       const filled=group.filter(x=>simple?effQty(x):(x.start!==''||x.end!=='')).length;
-      if(group.length) html+=(html?`<tr class="gap" aria-hidden="true"><td colspan="${cols}"></td></tr>`:'')
-        +`<tr class="section-row${closed?' closed':''}" style="--cat:${cat}"><td colspan="${cols}"><button type="button" class="secbtn" aria-expanded="${!closed}" onclick="toggleCat(${i})"><span class="chev" style="display:inline-block;${closed?'transform:rotate(-90deg)':''}">▾</span>${esc(it.sec)}<span class="cnt">${filled?filled+' filled':''}</span></button></td></tr>`;
+      const label=other?`${esc(it.sec)}<span class="secsub">not on standard load</span>`:esc(it.sec);
+      if(group.length) html+=(html?`<tr class="gap${other?' gap-other':''}" aria-hidden="true"><td colspan="${cols}"></td></tr>`:'')
+        +`<tr class="section-row${closed?' closed':''}${other?' sec-other':''}" style="--cat:${cat}"><td colspan="${cols}"><button type="button" class="secbtn" aria-expanded="${!closed}" onclick="toggleCat(${i})"><span class="chev" style="display:inline-block;${closed?'transform:rotate(-90deg)':''}">▾</span>${label}<span class="cnt">${filled?filled+' filled':(other&&closed?group.length+(group.length===1?' item':' items'):'')}</span></button></td></tr>`;
       return;
     }
     if(closed) return;
     const x=`<td class="xcell"><button class="del" aria-label="Remove ${esc(it.n)}" onclick="del(${i})">&times;</button></td>`;
     if(simple){
-      html+=`<tr class="irow" style="--cat:${cat}"><td class="item-name">${esc(it.n)}</td>${x}
+      html+=`<tr class="irow${other?' irow-other':''}" style="--cat:${cat}"><td class="item-name">${esc(it.n)}${hint(it.n)}</td>${x}
         <td class="pick"><button type="button" class="pickbtn qpick" aria-label="${esc(it.n)} quantity" onclick="pickQty(${i})">${esc(it.qty||'')}</button></td>
         <td class="pick"><button type="button" class="pickbtn upick" aria-label="${esc(it.n)} unit" onclick="pickUnit(${i})">${esc(it.unit||'each')}</button></td></tr>`;
     }else{
       const sp=(it.start!==''&&it.end!=='')?(Number(it.start)-Number(it.end)):'';
-      html+=`<tr class="irow" style="--cat:${cat}"><td class="item-name">${esc(it.n)}</td>${x}
+      html+=`<tr class="irow${other?' irow-other':''}" style="--cat:${cat}"><td class="item-name">${esc(it.n)}${hint(it.n)}</td>${x}
         <td><input class="num" inputmode="numeric" aria-label="${esc(it.n)} start" value="${esc(it.start||'')}" oninput="upd(${i},'start',this.value)"></td>
         <td><input class="num" inputmode="numeric" aria-label="${esc(it.n)} end" value="${esc(it.end||'')}" oninput="upd(${i},'end',this.value)"></td>
         <td class="spent" id="sp${i}">${sp}</td></tr>`;
@@ -570,8 +612,10 @@ function renderTable(){
   });
   $('tbody').innerHTML=html;
 }
-const LS_COLL='pal_commissary_collapsed';
+const LS_COLL='pal_commissary_collapsed', LS_OTHER_INIT='pal_commissary_other_init';
 const collapsedCats=new Set(lsGet(LS_COLL)||[]);
+// Other starts collapsed once per device; after that the user's own open/closed choice is kept
+if(!lsGet(LS_OTHER_INIT)){ collapsedCats.add(OTHER); lsSet(LS_COLL,[...collapsedCats]); lsSet(LS_OTHER_INIT,1); }
 function toggleCat(i){ const n=items[i].sec; collapsedCats.has(n)?collapsedCats.delete(n):collapsedCats.add(n); lsSet(LS_COLL,[...collapsedCats]); renderTable(); }
 function toggleCard(n){ const c=$(n+'Card').classList.toggle('collapsed'); $(n+'Toggle').setAttribute('aria-expanded',String(!c)); }
 function upd(i,k,v){
@@ -594,10 +638,10 @@ function addItem(){
 }
 
 // ===== Email =====
-const UNITS=['each','½ case','case','box','bag'];
+const UNITS=['each','½ case','case','box','bag','pack','sleeve','bottle','roll'];
 function unitPlural(u,n){ if(u==='each')return'each'; const m=n>1;
-  if(u==='½ case')return m?'½ cases':'½ case'; if(u==='case')return m?'cases':'case';
-  if(u==='box')return m?'boxes':'box'; if(u==='bag')return m?'bags':'bag'; return u; }
+  if(u==='½ case')return m?'½ cases':'½ case'; if(u==='box')return m?'boxes':'box';
+  return m?u+'s':u; }
 const effQty=it=>(it.qty||'').trim();
 const qtyText=it=>{ const q=effQty(it); if(!q)return''; const n=parseInt(q,10)||1; return q+' '+unitPlural(it.unit||'each',n); };
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
